@@ -9,6 +9,7 @@ namespace CodeGenerator
     {
         private static IDictionary<string, EntitySchema> _validEntities;
         private static IDictionary<string, OptionSetSchema> _validOptionSets;
+        private static IList<string> _includedOptionSets;
 
         public static IDictionary<string, EntitySchema> Entities
         {
@@ -31,6 +32,11 @@ namespace CodeGenerator
                 }
                 return _validOptionSets;
             }
+        }
+
+        public static IList<string> IncludedOptionSets
+        {
+            get { return _includedOptionSets ?? (_includedOptionSets = new List<string>()); }
         }
 
         public static string CurrentOptionSet { get; set; }

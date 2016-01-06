@@ -34,7 +34,8 @@
     <Reference Include="CrmSvcUtil">
       <HintPath>..\Lib\CrmSvcUtil.exe</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Xrm.Sdk">
+    <Reference Include="Microsoft.Xrm.Sdk, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.Xrm.Sdk.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -68,6 +69,9 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y $(ProjectDir)$(OutDir)*.dll $(SolutionDir)..\EntityConfigs</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

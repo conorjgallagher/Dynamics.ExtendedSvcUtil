@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,8 @@ namespace CodeGenerator
             Directory.CreateDirectory("Entities");
 
             var csharp = new CSharpCodeProvider();
+
+            var optionSets = new List<string>();
 
             for (var i = 0; i < codeUnit.Namespaces.Count; ++i)
             {
@@ -52,8 +55,9 @@ namespace CodeGenerator
                     }
                     if (type.IsEnum)
                     {
+                        //if (!Schema.IncludedOptionSets.Contains(type.Name)) continue;
                         // Should we check the parent entity to see if we should export this? Or just let all through?
-                        if (GetSchemaOptionSet(type.Name) == null) continue;
+                        //if (GetSchemaOptionSet(type.Name) == null) continue;
                     }
                     //if (type.IsEnum)
                     //{
@@ -140,7 +144,7 @@ namespace CodeGenerator
             }
             else
             {
-                Console.Error.WriteLine("SchemaStorage: No entity named '{0}'", name.ToLower());
+                //Console.Error.WriteLine("SchemaStorage: No entity named '{0}'", name.ToLower());
             }
             return entity;
         }
@@ -157,7 +161,7 @@ namespace CodeGenerator
             }
             else
             {
-                Console.Error.WriteLine("\tNo attribute named '{0}.{1}'", (entity != null ? entity.Name : ""), att.ToLower());
+                //Console.Error.WriteLine("\tNo attribute named '{0}.{1}'", (entity != null ? entity.Name : ""), att.ToLower());
             }
             return attribute;
         }
@@ -175,7 +179,7 @@ namespace CodeGenerator
             }
             else
             {
-                Console.Error.WriteLine("SchemaStorage: No option set named '{0}'", name);
+                //Console.Error.WriteLine("SchemaStorage: No option set named '{0}'", name);
             }
             return entity;
         }
@@ -206,13 +210,14 @@ namespace CodeGenerator
             {
                 //listAttribute = attribute as SchemaPickListAttribute;
                 picklistAttribute = attribute.Metadata as EnumAttributeMetadata;
+                Schema.IncludedOptionSets.Add(picklistAttribute.OptionSet.Name.ToLower());
                 if (picklistAttribute != null && Schema.OptionSets.ContainsKey(picklistAttribute.OptionSet.Name.ToLower()))
                 {
                     optionSet = Schema.OptionSets[picklistAttribute.OptionSet.Name.ToLower()];
                 }
                 else
                 {
-                    Console.Error.WriteLine("\tOption Set '{0}' could not be found for attribute '{1}.{2}'", member.Name, entity.Name, attribute.Name);
+                    //Console.Error.WriteLine("\tOption Set '{0}' could not be found for attribute '{1}.{2}'", member.Name, entity.Name, attribute.Name);
                 }
             }
 
