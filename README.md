@@ -4,7 +4,7 @@ Extension of the CrmSvcUtil to allow more custom creation of early bound types
 
 ## Synopsis
 
-After reviewing many other tools all lacked a few of the custom requirements we had in a project. We were looking for something we could:
+After reviewing many other tools all lacked a few of the custom requirements we had in a project. We had the following technical requirements:
 
 * Individual cs files for entities and option set
 * Ability to choose what entities you want to export
