@@ -6,11 +6,11 @@ Extension of the CrmSvcUtil to allow more custom creation of early bound types
 
 After reviewing many other tools all lacked a few of the custom requirements we had in a project. We had the following technical requirements:
 
-* Individual cs files for entities and option set
+* Individual cs files for entities and option sets
 * Ability to choose what entities you want to export
 * Ability to choose what option sets you want to export
-* Apply friendly names to both entites and attributes
-* Run ad-hoc and include in a build process. 
+* Apply friendly names to entites, attributes and option sets
+* Run ad-hoc and include in a build process 
 
 Unfortunately no projects out there met all these requirements so this project was born. Utilising the CrmSvcUtil looked like a good option so this is a requirement of this project. I could not locate CrmSvcUtil on nuget so I have included the CRM 2013 version in this project.
 
@@ -44,9 +44,9 @@ To configure to suit your specific needs within the application config you will 
 
 The main points to note:
 
-* If an entity/optionset appears in the list it will be exported to it's own cs file.
-* If it doesn't exist in the list then it will still be exported to the 1 big overall file (specified in the out parameter of CrmSvcUtil).
-* Use friendlyName to rename your entity/attribute/optionset
+* If an entity/optionset appears in the list it will be exported to its own cs file.
+* If it doesn't exist in the list then it will still be exported to the 1 large overall file (specified in the out parameter of CrmSvcUtil).
+* Use the friendlyName attribute to rename your entity/attribute/optionset
 
 A sample command line use is:
 
