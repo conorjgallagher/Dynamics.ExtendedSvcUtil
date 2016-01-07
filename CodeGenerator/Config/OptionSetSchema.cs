@@ -25,6 +25,6 @@ namespace CodeGenerator.Config
         {
             get { return (String)this["entity"]; }
             set { this["entity"] = value; }
-        } 
+        }
     }
 }

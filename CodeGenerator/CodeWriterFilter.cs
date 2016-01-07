@@ -2,6 +2,7 @@
 using Microsoft.Crm.Services.Utility;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Collections.Generic;
+using System.Linq;
 using CodeGenerator.Config;
 
 namespace CodeGenerator
@@ -25,17 +26,24 @@ namespace CodeGenerator
 
         public bool GenerateOptionSet(OptionSetMetadataBase optionSetMetadata, IServiceProvider services)
         {
-            if (!optionSetMetadata.IsGlobal.HasValue || !optionSetMetadata.IsGlobal.Value) return true;
+            Schema.OptionSets[optionSetMetadata.Name.ToLower()] = new OptionSetSchema
+            {
+                Name = optionSetMetadata.Name,
+                FriendlyName = optionSetMetadata.Name
+            };
+
+            //if (!optionSetMetadata.IsGlobal.HasValue || !optionSetMetadata.IsGlobal.Value) return true;
             //if (GeneratedOptionSets.ContainsKey(optionSetMetadata.Name)) return false;
             //GeneratedOptionSets[optionSetMetadata.Name] = true;
-            if (Schema.OptionSets.ContainsKey(optionSetMetadata.Name.ToLower()))
-            {
-                Schema.OptionSets[optionSetMetadata.Name.ToLower()] = new OptionSetSchema
-                {
-                    Name = optionSetMetadata.Name,
-                    FriendlyName = optionSetMetadata.Name
-                };
-            }
+
+            //if (Schema.OptionSets.ContainsKey(optionSetMetadata.Name.ToLower()))
+            //{
+                //Schema.OptionSets[optionSetMetadata.Name.ToLower()] = new OptionSetSchema
+                //{
+                //    Name = optionSetMetadata.Name,
+                //    FriendlyName = optionSetMetadata.Name
+                //};
+            //}
             return true;
             //return _defaultService.GenerateOptionSet(optionSetMetadata, services);
         }
@@ -68,6 +76,11 @@ namespace CodeGenerator
                 return true;
             return entity.Attributes.FirstOrDefault(a => a.Name == attributeMetadata.LogicalName) != null;
              */
+            if (Schema.Entities.ContainsKey(attributeMetadata.EntityLogicalName))
+            {
+                EntitySchema entity = Schema.Entities[attributeMetadata.EntityLogicalName];
+                entity.AttributeMetadata[attributeMetadata.SchemaName] = attributeMetadata;
+            }
             return _defaultService.GenerateAttribute(attributeMetadata, services);
         }
 

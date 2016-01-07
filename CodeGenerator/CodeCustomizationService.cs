@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -21,17 +22,17 @@ namespace CodeGenerator
         {
 
             // Iterate over all of the namespaces that were generated.
-            Directory.CreateDirectory("Enums");
-            Directory.CreateDirectory("Entities");
+            Directory.CreateDirectory(Schema.EnumsFolder);
+            Directory.CreateDirectory(Schema.EntitiesFolder);
 
-            var csharp = new CSharpCodeProvider();
 
-            var optionSets = new List<string>();
+            var optionSets = new Dictionary<string, List<CodeTypeDeclaration>>();
 
             for (var i = 0; i < codeUnit.Namespaces.Count; ++i)
             {
                 var types = codeUnit.Namespaces[i].Types;
 
+                // Export the classes first so that we know what optionsets we need
                 for (var j = 0; j < types.Count; j++)
                 {
                     var type = types[j];
@@ -41,20 +42,27 @@ namespace CodeGenerator
                         if (entity == null) continue;
                         foreach (CodeTypeMember member in type.Members)
                         {
-                            AttributeSchema attribute = GetSchemaAttribute(entity, member.Name);
                             if (member is CodeMemberProperty)
                             {
+                                AttributeSchema attribute = GetSchemaAttribute(entity, member.Name);
+                                AttributeMetadata attributeMetadata = entity.AttributeMetadata.ContainsKey(member.Name) ? entity.AttributeMetadata[member.Name] : null;
                                 //Check for whitelisted CRM atributes to attach the c# attributes
                                 //AttachAttributes(member, attribute);
                                 //Add attribute desc to the property summary for docs
                                 //AttachComments(member, attribute);
                                 //Check for option sets
-                                TransformOptionSets(member, entity, attribute);
+                                TransformOptionSets(member, entity, attribute, attributeMetadata);
+                                //if (!optionSets.ContainsKey(type.Name.ToLower()))
+                                //{
+                                //    optionSets[type.Name.ToLower()] = new List<CodeTypeDeclarationCollection>();
+                                //}
                             }
                         }
+                        ExportClassCodeFile(type, codeUnit.Namespaces[i].Name);
                     }
                     if (type.IsEnum)
                     {
+
                         //if (!Schema.IncludedOptionSets.Contains(type.Name)) continue;
                         // Should we check the parent entity to see if we should export this? Or just let all through?
                         //if (GetSchemaOptionSet(type.Name) == null) continue;
@@ -75,25 +83,75 @@ namespace CodeGenerator
 
 
                     //Export the code file
-                    var name = type.Name;
-                    var path = (type.IsEnum ? "Enums" : type.IsClass ? "Entities" : "");
-                    var namespaceName = codeUnit.Namespaces[i].Name;
-                    using (TextWriter output = new StreamWriter(string.Format("{0}\\{1}.cs", path, name), false))
+                    //ExportCodeFile(type, codeUnit.Namespaces[i].Name);
+
+                }
+
+                // Now that we know what optionsets need to be included create the adequate files for them
+                for (var j = 0; j < types.Count; j++)
+                {
+                    var type = types[j];
+
+                    if (type.IsEnum && Schema.IncludedOptionSets.ContainsKey(type.Name))
                     {
-
-                        var namespaces = new CodeNamespace() { Name = namespaceName };
-                        if (path.Equals("Enums"))
+                        var optionSet = Schema.IncludedOptionSets[type.Name];
+                        EntitySchema entity = GetSchemaEntity(optionSet.EntityLogicalName);
+                        var entityGroup = entity.FriendlyName;
+                        if (optionSet.OptionSet.IsGlobal.Value)
                         {
-                            namespaces.Imports.Add(new CodeNamespaceImport("System.ComponentModel"));
+                            entityGroup = "Global";
                         }
-                        namespaces.Types.Add(type);
-                        csharp.GenerateCodeFromNamespace(namespaces, output, new CodeGeneratorOptions() { });
-
+                        if (!optionSets.ContainsKey(entityGroup))
+                        {
+                            optionSets[entityGroup] = new List<CodeTypeDeclaration>();
+                        }
+                        optionSets[entityGroup].Add(type);
+                    }
+                }
+                foreach (var entityType in optionSets.Keys)
+                {
+                    if (Schema.GroupOptionSetsByEntity)
+                    {
+                        ExportOptionSetCodeFile(optionSets[entityType], codeUnit.Namespaces[i].Name,
+                            string.Format("{0}.Enums.cs", entityType));
+                    }
+                    else
+                    {
+                        foreach (var type in optionSets[entityType])
+                        {
+                            ExportOptionSetCodeFile(new List<CodeTypeDeclaration> { type }, codeUnit.Namespaces[i].Name, string.Format("{0}.cs", type.Name));
+                        }
                     }
                 }
             }
 
             //ExportSchemas();
+        }
+
+        private void ExportOptionSetCodeFile(List<CodeTypeDeclaration> types, string namespaceName, string filename = null)
+        {
+            var csharp = new CSharpCodeProvider();
+            var namespaces = new CodeNamespace() { Name = namespaceName };
+            namespaces.Imports.Add(new CodeNamespaceImport("System.ComponentModel"));
+            foreach (var type in types)
+            {
+                namespaces.Types.Add(type);
+            }
+            using (TextWriter output = new StreamWriter(string.Format("{0}\\{1}", Schema.EnumsFolder, filename), false))
+            {
+                csharp.GenerateCodeFromNamespace(namespaces, output, new CodeGeneratorOptions());
+            }
+        }
+
+        private void ExportClassCodeFile(CodeTypeDeclaration type, string namespaceName)
+        {
+            var csharp = new CSharpCodeProvider();
+            var namespaces = new CodeNamespace() { Name = namespaceName };
+            using (TextWriter output = new StreamWriter(string.Format("{0}\\{1}.cs", Schema.EntitiesFolder, type.Name), false))
+            {
+                namespaces.Types.Add(type);
+                csharp.GenerateCodeFromNamespace(namespaces, output, new CodeGeneratorOptions());
+            }
         }
 
         //private static void ExportSchemas()
@@ -198,7 +256,7 @@ namespace CodeGenerator
         //    return option;
         //}
 
-        private static void TransformOptionSets(CodeTypeMember member, EntitySchema entity, AttributeSchema attribute)
+        private static void TransformOptionSets(CodeTypeMember member, EntitySchema entity, AttributeSchema attribute, AttributeMetadata attributeMetadata)
         {
             var codeProperty = (CodeMemberProperty)member;
             if ((codeProperty.Type.BaseType != "Microsoft.Xrm.Sdk.OptionSetValue")) return;
@@ -206,13 +264,13 @@ namespace CodeGenerator
             EnumAttributeMetadata picklistAttribute = null;
             OptionSetSchema optionSet = null;
 
-            if (entity != null && attribute != null)
+            if (entity != null && (attribute != null || attributeMetadata != null))
             {
                 //listAttribute = attribute as SchemaPickListAttribute;
-                picklistAttribute = attribute.Metadata as EnumAttributeMetadata;
-                Schema.IncludedOptionSets.Add(picklistAttribute.OptionSet.Name.ToLower());
-                if (picklistAttribute != null && Schema.OptionSets.ContainsKey(picklistAttribute.OptionSet.Name.ToLower()))
+                picklistAttribute = attributeMetadata as EnumAttributeMetadata;
+                if (picklistAttribute != null) // && Schema.OptionSets.ContainsKey(picklistAttribute.OptionSet.Name.ToLower()))
                 {
+                    Schema.IncludedOptionSets[picklistAttribute.OptionSet.Name.ToLower()] = picklistAttribute;
                     optionSet = Schema.OptionSets[picklistAttribute.OptionSet.Name.ToLower()];
                 }
                 else
@@ -220,6 +278,7 @@ namespace CodeGenerator
                     //Console.Error.WriteLine("\tOption Set '{0}' could not be found for attribute '{1}.{2}'", member.Name, entity.Name, attribute.Name);
                 }
             }
+
 
             if (optionSet != null)
             {

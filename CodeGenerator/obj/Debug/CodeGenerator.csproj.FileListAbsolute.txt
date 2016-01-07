@@ -6,3 +6,11 @@ E:\g\Dynamics.ExtendedSvcUtil\CodeGenerator\bin\Debug\Microsoft.Xrm.Sdk.dll
 E:\g\Dynamics.ExtendedSvcUtil\CodeGenerator\obj\Debug\CodeGenerator.dll
 E:\g\Dynamics.ExtendedSvcUtil\CodeGenerator\obj\Debug\CodeGenerator.pdb
 E:\g\Dynamics.ExtendedSvcUtil\CodeGenerator\obj\Debug\CodeGenerator.csprojResolveAssemblyReference.cache
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\bin\Debug\CodeGenerator.dll.config
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\bin\Debug\CodeGenerator.dll
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\bin\Debug\CodeGenerator.pdb
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\bin\Debug\CrmSvcUtil.exe
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\obj\Debug\CodeGenerator.csprojResolveAssemblyReference.cache
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\obj\Debug\CodeGenerator.dll
+C:\w-t\Open Source\ExtendedSvcUtil\ExtendedSvcUtil\CodeGenerator\obj\Debug\CodeGenerator.pdb
