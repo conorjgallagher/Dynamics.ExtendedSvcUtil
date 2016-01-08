@@ -58,9 +58,9 @@ namespace CodeGenerator
                 {
                     var type = types[j];
 
-                    if (type.IsEnum && Schema.IncludedOptionSets.ContainsKey(type.Name))
+                    EnumAttributeMetadata optionSet = GetIncludedOptionSet(type.Name);
+                    if (type.IsEnum && optionSet != null)
                     {
-                        var optionSet = Schema.IncludedOptionSets[type.Name];
                         EntitySchema entity = GetSchemaEntity(optionSet.EntityLogicalName);
                         var entityGroup = entity.FriendlyName;
                         if (optionSet.OptionSet.IsGlobal.Value)
@@ -90,6 +90,23 @@ namespace CodeGenerator
                     }
                 }
             }
+        }
+
+        private EnumAttributeMetadata GetIncludedOptionSet(string name)
+        {
+            if (Schema.IncludedOptionSets.ContainsKey(name.ToLower()))
+            {
+                return Schema.IncludedOptionSets[name.ToLower()];
+            }
+            if (Schema.OptionSets.Any(o => o.Value.FriendlyName == name))
+            {
+                var optionSetSchema = Schema.OptionSets.First(o => o.Value.FriendlyName == name);
+                if (Schema.IncludedOptionSets.ContainsKey(optionSetSchema.Value.Name.ToLower()))
+                {
+                    return Schema.IncludedOptionSets[optionSetSchema.Value.Name.ToLower()];
+                }
+            }
+            return null;
         }
 
         private void ExportOptionSetCodeFile(List<CodeTypeDeclaration> types, string namespaceName, string filename = null)
@@ -128,10 +145,6 @@ namespace CodeGenerator
             else if(Schema.Entities.Values.FirstOrDefault(e => e.FriendlyName == name) != null)
             {
                 return Schema.Entities.Values.FirstOrDefault(e => e.FriendlyName == name);
-            }
-            else
-            {
-                //Console.Error.WriteLine("SchemaStorage: No entity named '{0}'", name.ToLower());
             }
             return entity;
         }
