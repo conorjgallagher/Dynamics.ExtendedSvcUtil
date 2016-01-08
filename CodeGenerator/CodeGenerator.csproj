@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeCustomizationService.cs" />
-    <Compile Include="CodeGenerationService.cs" />
     <Compile Include="CodeWriterFilter.cs" />
     <Compile Include="Config\AttributeSchema.cs" />
     <Compile Include="Config\AttributeSchemaCollection.cs" />
