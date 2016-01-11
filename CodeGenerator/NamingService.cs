@@ -33,14 +33,6 @@ namespace CodeGenerator
         public string GetNameForOptionSet(EntityMetadata entityMetadata, OptionSetMetadataBase optionSetMetadata,
             IServiceProvider services)
         {
-            //return _defaultNamingService.GetNameForOptionSet(entityMetadata, optionSetMetadata, services);
-            //if (optionSetMetadata.OptionSetType.Value == OptionSetType.State)
-            //{
-            //    return _defaultNamingService.GetNameForOptionSet(entityMetadata, optionSetMetadata, services);
-            //}
-            //return Schema.OptionSets[optionSetMetadata.Name].FriendlyName;
-            // Ensure that the OptionSet is not global before using the custom
-            // implementation.
             if (optionSetMetadata.IsGlobal.HasValue && !optionSetMetadata.IsGlobal.Value)
             {
                 // Find the attribute which uses the specified OptionSet.
@@ -56,18 +48,12 @@ namespace CodeGenerator
                 // metadata of the entity, either.
                 if (attribute != null)
                 {
-                    //var optionSetName = String.Format("{0}{1}",
-                    //    GetNameForEntity(entityMetadata, services),
-                    //    optionSetMetadata.Name).ToLower();
                     var optionSetName = optionSetMetadata.Name.ToLower();
                     if (Schema.OptionSets.ContainsKey(optionSetName))
                     {
                         return Schema.OptionSets[optionSetName].FriendlyName;
                     }
-                    // Concatenate the name of the entity and the name of the attribute
-                    // together to form the OptionSet name.
                     return optionSetName;
-
                 }
             }
 

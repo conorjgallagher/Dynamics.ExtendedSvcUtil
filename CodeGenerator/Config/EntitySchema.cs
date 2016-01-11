@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CodeGenerator.Config
 {
     public class EntitySchema : ConfigurationElement
     {
+        private IDictionary<string, AttributeMetadata> _attributeMetadata;
+
         [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
         public String Name
         {
@@ -30,6 +35,12 @@ namespace CodeGenerator.Config
         public AttributeSchemaCollection Attributes
         {
             get { return base["attributes"] as AttributeSchemaCollection; }
+        }
+
+        public IDictionary<string, AttributeMetadata> AttributeMetadata
+        {
+            get { return _attributeMetadata ?? (_attributeMetadata = new Dictionary<string, AttributeMetadata>()); }
+            set { _attributeMetadata = value; }
         }
     }
 }
