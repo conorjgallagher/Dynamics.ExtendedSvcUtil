@@ -71,7 +71,10 @@ namespace CodeGenerator
                         {
                             optionSets[entityGroup] = new List<CodeTypeDeclaration>();
                         }
-                        optionSets[entityGroup].Add(type);
+                        if (optionSets[entityGroup].Any(t => t.Name == type.Name) == false)
+                        {
+                            optionSets[entityGroup].Add(type);
+                        }
                     }
                 }
                 foreach (var entityType in optionSets.Keys)
@@ -153,7 +156,8 @@ namespace CodeGenerator
         private static void TransformOptionSets(CodeTypeMember member, EntitySchema entity, AttributeMetadata attributeMetadata)
         {
             var codeProperty = (CodeMemberProperty)member;
-            if ((codeProperty.Type.BaseType != "Microsoft.Xrm.Sdk.OptionSetValue")) return;
+
+            if (member.Name != "StateCode" && codeProperty.Type.BaseType != "Microsoft.Xrm.Sdk.OptionSetValue") return;
 
             EnumAttributeMetadata picklistAttribute = null;
             OptionSetSchema optionSet = null;
@@ -167,7 +171,6 @@ namespace CodeGenerator
                     optionSet = Schema.OptionSets[picklistAttribute.OptionSet.Name.ToLower()];
                 }
             }
-
 
             if (optionSet != null)
             {

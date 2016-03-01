@@ -41,9 +41,6 @@ namespace CodeGenerator
         }
         public static string EnumsFolder { get; set; }
         public static string EntitiesFolder { get; set; }
-        public static string CurrentOptionSet { get; set; }
-        public static string CurrentEntity { get; set; }
-        public static ExportTypeEnum ExportType { get; set; }
         public static bool GroupOptionSetsByEntity { get; set; }
         private static void LoadConfig()
         {
@@ -71,12 +68,5 @@ namespace CodeGenerator
             EnumsFolder = schemaDefinition.EnumsFolder;
             GroupOptionSetsByEntity = schemaDefinition.GroupOptionSetsByEntity;
         }
-
-    }
-
-    public enum ExportTypeEnum
-    {
-        Entity,
-        OptionSet
     }
 }

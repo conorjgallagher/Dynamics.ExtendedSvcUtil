@@ -33,6 +33,16 @@ namespace CodeGenerator
         public string GetNameForOptionSet(EntityMetadata entityMetadata, OptionSetMetadataBase optionSetMetadata,
             IServiceProvider services)
         {
+            if (optionSetMetadata.OptionSetType != null && optionSetMetadata.OptionSetType.Value == OptionSetType.State)
+            {
+                var optionSetName = optionSetMetadata.Name.ToLower();
+                if (Schema.OptionSets.ContainsKey(optionSetName))
+                {
+                    return Schema.OptionSets[optionSetName].FriendlyName;
+                }
+
+                return _defaultNamingService.GetNameForOptionSet(entityMetadata, optionSetMetadata, services);
+            }
             if (optionSetMetadata.IsGlobal.HasValue && !optionSetMetadata.IsGlobal.Value)
             {
                 // Find the attribute which uses the specified OptionSet.
