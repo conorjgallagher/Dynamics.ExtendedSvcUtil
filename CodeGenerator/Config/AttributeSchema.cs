@@ -20,6 +20,7 @@ namespace CodeGenerator.Config
             set { this["friendlyName"] = value; }
         }
 
+
         public AttributeMetadata Metadata { get; set; }
     }
 }

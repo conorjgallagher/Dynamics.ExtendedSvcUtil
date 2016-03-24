@@ -1,9 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CodeGenerator.Config;
@@ -20,7 +18,6 @@ namespace CodeGenerator
         /// </summary>
         public void CustomizeCodeDom(CodeCompileUnit codeUnit, IServiceProvider services)
         {
-
             // Iterate over all of the namespaces that were generated.
             Directory.CreateDirectory(Schema.EnumsFolder);
             Directory.CreateDirectory(Schema.EntitiesFolder);
@@ -45,6 +42,17 @@ namespace CodeGenerator
                             if (member is CodeMemberProperty)
                             {
                                 AttributeMetadata attributeMetadata = entity.AttributeMetadata.ContainsKey(member.Name) ? entity.AttributeMetadata[member.Name] : null;
+                                if (attributeMetadata == null)
+                                {
+                                    var attributeSchema = entity.Attributes.FirstOrDefault(a => a.FriendlyName == member.Name);
+                                    if (attributeSchema != null) 
+                                    {
+                                        attributeMetadata = 
+                                            entity.AttributeMetadata.Any(a => a.Key.ToLower() == attributeSchema.Name.ToLower())
+                                            ? entity.AttributeMetadata.First(a => a.Key.ToLower() == attributeSchema.Name.ToLower()).Value
+                                            : null;
+                                    }
+                                }
                                 TransformOptionSets(member, entity, attributeMetadata);
 
                             }
@@ -157,7 +165,7 @@ namespace CodeGenerator
         {
             var codeProperty = (CodeMemberProperty)member;
 
-            if (member.Name != "StateCode" && codeProperty.Type.BaseType != "Microsoft.Xrm.Sdk.OptionSetValue") return;
+            if (member.Name.ToLower() != "statecode" && codeProperty.Type.BaseType != "Microsoft.Xrm.Sdk.OptionSetValue") return;
 
             EnumAttributeMetadata picklistAttribute = null;
             OptionSetSchema optionSet = null;
@@ -214,7 +222,7 @@ namespace CodeGenerator
                     string.Format(
                         "var ret = this.GetAttributeValue<Microsoft.Xrm.Sdk.OptionSetValue>(\"{1}\");" + Environment.NewLine +
                         "\t\t\t\treturn (ret!=null ? ({0}?)ret.Value : ({0}?)null);",
-                        optionSet.Name, listAttribute.LogicalName)
+                        optionSet.FriendlyName, listAttribute.LogicalName)
                     ));
             }
         }

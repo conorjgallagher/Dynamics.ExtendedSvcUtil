@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CodeGenerator.Config;
 using Microsoft.Crm.Services.Utility;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -33,9 +34,11 @@ namespace CodeGenerator
         public string GetNameForOptionSet(EntityMetadata entityMetadata, OptionSetMetadataBase optionSetMetadata,
             IServiceProvider services)
         {
-            if (optionSetMetadata.OptionSetType != null && optionSetMetadata.OptionSetType.Value == OptionSetType.State)
+            var optionSetName = optionSetMetadata.Name.ToLower();
+            if (optionSetMetadata.OptionSetType != null && 
+                (optionSetMetadata.OptionSetType.Value == OptionSetType.State || optionSetMetadata.OptionSetType.Value == OptionSetType.Status)
+                )
             {
-                var optionSetName = optionSetMetadata.Name.ToLower();
                 if (Schema.OptionSets.ContainsKey(optionSetName))
                 {
                     return Schema.OptionSets[optionSetName].FriendlyName;
@@ -58,7 +61,6 @@ namespace CodeGenerator
                 // metadata of the entity, either.
                 if (attribute != null)
                 {
-                    var optionSetName = optionSetMetadata.Name.ToLower();
                     if (Schema.OptionSets.ContainsKey(optionSetName))
                     {
                         return Schema.OptionSets[optionSetName].FriendlyName;

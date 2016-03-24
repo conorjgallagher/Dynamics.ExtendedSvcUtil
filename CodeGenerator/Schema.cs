@@ -42,7 +42,7 @@ namespace CodeGenerator
         public static string EnumsFolder { get; set; }
         public static string EntitiesFolder { get; set; }
         public static bool GroupOptionSetsByEntity { get; set; }
-        private static void LoadConfig()
+        public static void LoadConfig()
         {
             ExeConfigurationFileMap configMap = new ExeConfigurationFileMap
             {
