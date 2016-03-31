@@ -35,38 +35,9 @@ namespace CodeGenerator
             IServiceProvider services)
         {
             var optionSetName = optionSetMetadata.Name.ToLower();
-            if (optionSetMetadata.OptionSetType != null && 
-                (optionSetMetadata.OptionSetType.Value == OptionSetType.State || optionSetMetadata.OptionSetType.Value == OptionSetType.Status)
-                )
+            if (Schema.OptionSets.ContainsKey(optionSetName))
             {
-                if (Schema.OptionSets.ContainsKey(optionSetName))
-                {
-                    return Schema.OptionSets[optionSetName].FriendlyName;
-                }
-
-                return _defaultNamingService.GetNameForOptionSet(entityMetadata, optionSetMetadata, services);
-            }
-            if (optionSetMetadata.IsGlobal.HasValue && !optionSetMetadata.IsGlobal.Value)
-            {
-                // Find the attribute which uses the specified OptionSet.
-                var attribute =
-                    (from a in entityMetadata.Attributes
-                     where a.AttributeType == AttributeTypeCode.Picklist
-                     && ((EnumAttributeMetadata)a).OptionSet.MetadataId
-                         == optionSetMetadata.MetadataId
-                     select a).FirstOrDefault();
-
-                // Check for null, since statuscode attributes on custom entities are not
-                // global, but their optionsets are not included in the attribute
-                // metadata of the entity, either.
-                if (attribute != null)
-                {
-                    if (Schema.OptionSets.ContainsKey(optionSetName))
-                    {
-                        return Schema.OptionSets[optionSetName].FriendlyName;
-                    }
-                    return optionSetName;
-                }
+                return Schema.OptionSets[optionSetName].FriendlyName;
             }
 
             return _defaultNamingService.GetNameForOptionSet(
