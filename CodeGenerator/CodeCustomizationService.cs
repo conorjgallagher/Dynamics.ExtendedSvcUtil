@@ -108,17 +108,17 @@ namespace CodeGenerator
                         {
                             IsStruct = true
                         };
-                        foreach (var attributName in entitySchema.AttributeNamesExport)
+                        foreach (var attributeName in entitySchema.AttributeNamesExport)
                         {
                             CodeMemberField codeMemberField = new CodeMemberField(); //"string", attributName.Key);
                             codeMemberField.Type = new CodeTypeReference(typeof (string));
-                            codeMemberField.Name = attributName.Key;
+                            codeMemberField.Name = attributeName.Key;
                             codeMemberField.Attributes = MemberAttributes.Const | MemberAttributes.Public;
-                            codeMemberField.InitExpression = new CodePrimitiveExpression(attributName.Value);
+                            codeMemberField.InitExpression = new CodePrimitiveExpression(attributeName.Value);
                             attributeStruct.Members.Add(codeMemberField);
                         }
                         ExportClassCodeFile(attributeStruct, codeUnit.Namespaces[i].Name,
-                            string.Format("{0}.Attribtes", entitySchema.FriendlyName));
+                            string.Format("{0}.Attributes", entitySchema.FriendlyName));
                     }
                 }
             }
