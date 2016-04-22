@@ -39,9 +39,11 @@ namespace CodeGenerator
         {
             get { return _includedOptionSets ?? (_includedOptionSets = new Dictionary<string, EnumAttributeMetadata>()); }
         }
+
         public static string EnumsFolder { get; set; }
         public static string EntitiesFolder { get; set; }
         public static bool GroupOptionSetsByEntity { get; set; }
+        public static bool ExportAttributeNames { get; set; }
         public static void LoadConfig()
         {
             ExeConfigurationFileMap configMap = new ExeConfigurationFileMap
@@ -67,6 +69,7 @@ namespace CodeGenerator
             EntitiesFolder = schemaDefinition.EntitiesFolder;
             EnumsFolder = schemaDefinition.EnumsFolder;
             GroupOptionSetsByEntity = schemaDefinition.GroupOptionSetsByEntity;
+            ExportAttributeNames = schemaDefinition.ExportAttributesNames;
         }
     }
 }

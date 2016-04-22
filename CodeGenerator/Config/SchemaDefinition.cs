@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace CodeGenerator.Config
@@ -19,11 +20,18 @@ namespace CodeGenerator.Config
             set { this["groupOptionSetsByEntity"] = value; }
         }
 
-        [ConfigurationProperty("enumsFolder", IsRequired = false, DefaultValue = "Enums")]
+        [ConfigurationProperty("enumsFolder", IsRequired = false, DefaultValue = "Entities")]
         public String EnumsFolder
         {
             get { return (String)this["enumsFolder"]; }
             set { this["enumsFolder"] = value; }
+        }
+
+        [ConfigurationProperty("exportAttributeNames", IsRequired = false, DefaultValue = false)]
+        public bool ExportAttributesNames
+        {
+            get { return (bool)this["exportAttributeNames"]; }
+            set { this["exportAttributeNames"] = value; }
         }
 
         [ConfigurationProperty("entities")]

@@ -100,6 +100,27 @@ namespace CodeGenerator
                         }
                     }
                 }
+                if (Schema.ExportAttributeNames)
+                {
+                    foreach (var entitySchema in Schema.Entities.Values)
+                    {
+                        var attributeStruct = new CodeTypeDeclaration(entitySchema.FriendlyName + "Attributes")
+                        {
+                            IsStruct = true
+                        };
+                        foreach (var attributName in entitySchema.AttributeNamesExport)
+                        {
+                            CodeMemberField codeMemberField = new CodeMemberField(); //"string", attributName.Key);
+                            codeMemberField.Type = new CodeTypeReference(typeof (string));
+                            codeMemberField.Name = attributName.Key;
+                            codeMemberField.Attributes = MemberAttributes.Const | MemberAttributes.Public;
+                            codeMemberField.InitExpression = new CodePrimitiveExpression(attributName.Value);
+                            attributeStruct.Members.Add(codeMemberField);
+                        }
+                        ExportClassCodeFile(attributeStruct, codeUnit.Namespaces[i].Name,
+                            string.Format("{0}.Attribtes", entitySchema.FriendlyName));
+                    }
+                }
             }
         }
 
@@ -135,11 +156,11 @@ namespace CodeGenerator
             }
         }
 
-        private void ExportClassCodeFile(CodeTypeDeclaration type, string namespaceName)
+        private void ExportClassCodeFile(CodeTypeDeclaration type, string namespaceName, string filename = null)
         {
             var csharp = new CSharpCodeProvider();
             var namespaces = new CodeNamespace() { Name = namespaceName };
-            using (TextWriter output = new StreamWriter(string.Format("{0}\\{1}.cs", Schema.EntitiesFolder, type.Name), false))
+            using (TextWriter output = new StreamWriter(string.Format("{0}\\{1}.cs", Schema.EntitiesFolder, filename ?? type.Name), false))
             {
                 namespaces.Types.Add(type);
                 csharp.GenerateCodeFromNamespace(namespaces, output, new CodeGeneratorOptions());

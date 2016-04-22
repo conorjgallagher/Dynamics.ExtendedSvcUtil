@@ -9,6 +9,7 @@ namespace CodeGenerator.Config
     public class EntitySchema : ConfigurationElement
     {
         private IDictionary<string, AttributeMetadata> _attributeMetadata;
+        private IDictionary<string, string> _attributeNamesExport;
 
         [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
         public String Name
@@ -41,6 +42,11 @@ namespace CodeGenerator.Config
         {
             get { return _attributeMetadata ?? (_attributeMetadata = new Dictionary<string, AttributeMetadata>()); }
             set { _attributeMetadata = value; }
+        }
+
+        public IDictionary<string, string> AttributeNamesExport
+        {
+            get { return _attributeNamesExport ?? (_attributeNamesExport = new Dictionary<string, string>()); }
         }
     }
 }

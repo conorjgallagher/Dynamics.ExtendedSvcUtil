@@ -66,13 +66,25 @@ namespace CodeGenerator
         {
             if (Schema.Entities.ContainsKey(entityMetadata.LogicalName))
             {
+                var entitySchema = Schema.Entities[entityMetadata.LogicalName];
                 var attribute =
-                    Schema.Entities[entityMetadata.LogicalName].Attributes.FirstOrDefault(
+                    entitySchema.Attributes.FirstOrDefault(
                         a => a.Name == attributeMetadata.LogicalName);
                 if (attribute != null)
                 {
                     attribute.Metadata = attributeMetadata;
+
+                    if (Schema.ExportAttributeNames)
+                    {
+                        entitySchema.AttributeNamesExport[attribute.FriendlyName] = attributeMetadata.LogicalName;
+                    }
+
                     return attribute.FriendlyName;
+                }
+
+                if (Schema.ExportAttributeNames)
+                {
+                    entitySchema.AttributeNamesExport[attributeMetadata.LogicalName] = attributeMetadata.LogicalName;
                 }
             }
             return _defaultNamingService.GetNameForAttribute(entityMetadata, attributeMetadata, services);
