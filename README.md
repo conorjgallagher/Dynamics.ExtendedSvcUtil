@@ -1,6 +1,6 @@
 # Dynamics.ExtendedSvcUtil
 
-Extension of the CrmSvcUtil to allow more custom creation of early bound types
+Extension of the CrmSvcUtil to allow more custom creation of early bound types. Latest version of the DLL included in the root folder
 
 ## Synopsis
 
