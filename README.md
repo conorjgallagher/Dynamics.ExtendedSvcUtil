@@ -11,13 +11,14 @@ This tool extends the CrmSvcUtil to provide the following features:
 * Ability to choose what entities you want to export
 * Only creates option sets for the entities you are exporting
 * Apply friendly names to entites, attributes and option sets
+* Export lists of attributes to allow strongly typed attribute names
 * Run ad-hoc and include in a build process 
 
-It utilises the CrmSvcUtil to achieve this so this is a requirement of this project. The version of the CrmSvcUtil used at time of writing this was the version included with CRM 2016. But the DLL can be rebuilt to work with older versions if required.
+It utilises the CrmSvcUtil to achieve this as this. The version of the CrmSvcUtil used at time of writing this was the version included with CRM 2016. But the DLL can be rebuilt to work with older versions if required.
 
 ## How to use
 
-I will provided binaries as soon as I am happy we have a stable version. For now you must take a copy of the source locally and build it.
+First stable version of the DLL is included in the root folder of the source. Otherwise you must take a copy of the source locally and build it.
 
 To configure to suit your specific needs within the application config you will see a sample schemaDefinition section. This has 2 sub sections for entities and option sets that allow you to specify the configuration for each. For example:
 
